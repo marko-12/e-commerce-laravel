@@ -11,7 +11,7 @@ class Product extends Authenticatable
 {
     use HasFactory;
 
-    protected $hidden = [
+    protected $fillable = [
         'name',
         'image',
         'category',
@@ -20,15 +20,29 @@ class Product extends Authenticatable
         'price',
         'count_in_stock',
         'rating',
-        'num_of_reviews'
+        'num_of_reviews',
+        'user_id'
     ];
-    protected $table = 'product';
+    protected $table = 'products';
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 
     /**
      * @return HasMany
      */
-    public function reviews(): HasMany
+    public function review(): HasMany
     {
         return $this->hasMany(Review::class);
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function order_item() : HasMany
+    {
+        return $this->hasMany(OrderItem::class);
     }
 }
