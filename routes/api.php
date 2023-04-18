@@ -33,17 +33,12 @@ Route::get('/test', function (){
     }
 });
 
-Route::get('product', [Controller::class, 'productCreateTest']);
-Route::get('usertest', [Controller::class, 'userCreateTest']);
-Route::get('review', [Controller::class, 'reviewCreateTest']);
-Route::get('orderitem',[Controller::class, 'orderItemCreateTest']);
-
 Route::get('users', [UserController::class, 'getUsers']);
 Route::get('users/{id}', [UserController::class, 'getUserById']);
 Route::patch('users/resetpassword/{id}',[UserController::class, 'resetPassword']);
 Route::delete('users/deleteuser/{id}', [UserController::class, 'deleteUser']);
 Route::post('signup', [UserController::class, 'createUser']);
-Route::post('signin', [UserController::class, 'signIn']);
+Route::post('signin', [UserController::class, 'signIn'])->middleware("auth:sanctum", "ability:login");
 
 Route::get('products', [ProductController::class, 'getProducts']);
 Route::get("products/{id}", [ProductController::class, 'getProductById']);
@@ -52,3 +47,5 @@ Route::delete('products/{id}', [ProductController::class, 'deleteProduct']);
 Route::patch('products/{id}', [ProductController::class, 'updateProduct']);
 
 Route::get('orders', [OrderController::class, 'getOrders']);
+Route::get('orders/{id}',[OrderController::class, 'getOrderById']);
+Route::post('orders', [OrderController::class, 'createOrder']);

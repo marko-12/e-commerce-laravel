@@ -22,18 +22,29 @@ class UserController extends Controller
     }
     public function createUser(Request $request)
     {
-        $request->validate(['name' => 'required|string', 'email' => 'required|string', 'password' => 'required|string']);
+        $request->validate(['name' => 'required|string', 'email' => 'required|string|unique:users,email', 'password' => 'required|string']);
 
         $name = $request->name;
         $email = $request->email;
         $password = bcrypt($request->password);
         if($newUser = User::factory()->create(['name' => $name, 'email' => $email, 'password' => $password]))
         {
-            return ('Successfully created new user');
+            if ($token = $newUser->createToken("access_token", ["login"]))
+            {
+                return [
+                    'user' => $newUser,
+                    'token' => $token->plainTextToken
+                ];
+            }
+            else
+            {
+                return response('Error while creating user token', 404);
+            }
+            //return ('Successfully created new user');
         }
         else
         {
-            return ('Error while creating new user');
+            return response('Error while creating new user', 404);
         }
     }
     public function resetPassword(Request $request, $id)
@@ -47,11 +58,11 @@ class UserController extends Controller
             'password' => $password
         ]))
         {
-            return ("User successfully updated");
+            return response("User successfully updated", 200);
         }
         else
         {
-            return ("Error while updating user");
+            return response("Error while updating user", 404);
         }
     }
 
@@ -59,11 +70,11 @@ class UserController extends Controller
     {
         if (User::find($id)->delete())
         {
-            return ('User successfully deleted');
+            return response('User successfully deleted', 200);
         }
         else
         {
-            return ('Error while deleting user');
+            return response('Error while deleting user', 404);
         }
     }
     public function signIn(Request $request)
@@ -73,19 +84,18 @@ class UserController extends Controller
         $email = $request->email;
         if ($user = User::where('email', $email)->first())
         {
-            $password = $request->password;
-            if (Hash::check($password, $user->password))
+            if (Hash::check($request->password, $user->password))
             {
                 return ("Successful Sign In ");
             }
             else
             {
-                return ("Wrong Password");
+                return response("Wrong Password", 401);
             }
         }
         else
         {
-            return ('User not found');
+            return response('User not found', 401);
         }
     }
 }

@@ -20,6 +20,8 @@ class OrderFactory extends Factory
             'country' => fake()->country(),
             'city' => fake()->city(),
             'address' => fake()->address(),
+            'delivered' => false,
+            'delivered_at' => null,
             'user_id' => fake()->numberBetween(1, 5)
         ];
     }

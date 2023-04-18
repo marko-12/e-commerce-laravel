@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\OrderItem;
 use Carbon\Carbon;
 use Faker\Core\DateTime;
+use http\Env\Response;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -24,24 +26,44 @@ class OrderController extends Controller
             'country' => 'required|string',
             'city' => 'required|string',
             'address' => 'required|string',
+            'order_items' => 'required|array',
             'user_id' => 'required|int',
-            'quantity' => 'required|int',
-            'product_id' => 'required|int',
         ]);
-        $country = $request->country;
-        $city = $request->city;
-        $address = $request->address;
-        $user_id = $request->user_id;
-        $quantity = $request->quantuty;
-        $product_id = $request->product_id;
 
         $newOrder = Order::factory()->create([
-            'country' => $country,
-            'city' => $city,
-            'address' => $address,
+            'country' => $request->country,
+            'city' => $request->city,
+            'address' => $request->address,
             'delivered' => false,
-            'delivered_at' => Carbon::now(),
-            'user_id' => $user_id
+            'delivered_at' => null,
+            'user_id' => $request->user_id
         ]);
+
+        $success = true;
+        foreach ($request->order_items as $orderItem)
+            {
+                if (!$newOrderItem = OrderItem::factory()->create([
+                    'quantity' => $orderItem["quantity"],
+                    'product_id' => $orderItem["product_id"],
+                    'order_id' => $newOrder->id
+                ]))
+                {
+                    $success = false;
+                }
+            }
+
+//        $newOrderItem = OrderItem::factory()->create([
+//            'quantity' => $request->quantity,
+//            'product_id' => $request->product_id,
+//            'order_id' => $newOrder->id
+//        ]);
+        if ($newOrder && $success)
+        {
+            return response('Successfully created order', 200);
+        }
+        else
+        {
+            return response('Error while creating order', 404);
+        }
     }
 }
