@@ -2,42 +2,39 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProductRequest;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
     public function getProducts()
     {
-        return Product::all();
+        return response()->json(Product::all());
+        //return response(Product::all(),200);
     }
     public function getProductById($id)
     {
-        return Product::find($id);
-    }
-    public function createProduct(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string',
-            'brand' => 'required|string',
-            'category' => 'required|string',
-            'price' => 'required|int',
-            'count_in_stock' => 'required|int',
-            'user_id' => 'required|int'
-        ]);
+        $product = Product::find($id);
+        $reviews = $product->review()->get();
+        $users = collect();
 
-        if ($newProduct = Product::factory()->create([
-            'name' => $request->name,
-            'image' => $request->image,
-            'brand' => $request->brand,
-            'category' => $request->category,
-            'description' => $request->description,
-            'price' => $request->price,
-            'count_in_stock' => $request->count_in_stock,
-            'rating' => 0,
-            'num_of_reviews' => 0,
-            'user_id' => $request->user_id
-            ]))
+        foreach ($reviews as $review)
+        {
+            $user = $review->user()->get('name');
+            $users->push($user->first());
+        }
+
+        return response()->json([$product, $reviews , $users]);
+    }
+    public function createProduct(ProductRequest $request)
+    {
+
+        $validated = $request->validated();
+
+        $user = User::find($request->user_id);
+        if ($user->product()->create($validated))
         {
             return response('Successfully created new product', 200);
         }
@@ -99,5 +96,12 @@ class ProductController extends Controller
         {
             return response('The product does not exist', 404);
         }
+    }
+
+    public function getCategories()
+    {
+        $categories = Product::distinct('category')->pluck('category');
+        //$categories = Product::all();
+        return response()->json($categories);
     }
 }

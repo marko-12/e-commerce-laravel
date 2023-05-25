@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\OrderRequest;
 use App\Models\Order;
 use App\Models\OrderItem;
-use Carbon\Carbon;
-use Faker\Core\DateTime;
-use http\Env\Response;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -20,44 +19,15 @@ class OrderController extends Controller
     {
         return response(Order::find($id), 200);
     }
-    public function createOrder(Request $request)
+    public function createOrder(OrderRequest $request)
     {
-        $request->validate([
-            'country' => 'required|string',
-            'city' => 'required|string',
-            'address' => 'required|string',
-            'order_items' => 'required|array',
-            'user_id' => 'required|int',
-        ]);
+        $validated = $request->validated();
 
-        $newOrder = Order::factory()->create([
-            'country' => $request->country,
-            'city' => $request->city,
-            'address' => $request->address,
-            'delivered' => false,
-            'delivered_at' => null,
-            'user_id' => $request->user_id
-        ]);
+        $user = User::find($request->user_id);
+        $newOrder = $user->order()->create($validated);
+        $newOrderItems = $newOrder->product()->sync($request->order_items);
 
-        $success = true;
-        foreach ($request->order_items as $orderItem)
-            {
-                if (!$newOrderItem = OrderItem::factory()->create([
-                    'quantity' => $orderItem["quantity"],
-                    'product_id' => $orderItem["product_id"],
-                    'order_id' => $newOrder->id
-                ]))
-                {
-                    $success = false;
-                }
-            }
-
-//        $newOrderItem = OrderItem::factory()->create([
-//            'quantity' => $request->quantity,
-//            'product_id' => $request->product_id,
-//            'order_id' => $newOrder->id
-//        ]);
-        if ($newOrder && $success)
+        if ($newOrder && $newOrderItems)
         {
             return response('Successfully created order', 200);
         }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
@@ -38,13 +39,16 @@ Route::get('users/{id}', [UserController::class, 'getUserById']);
 Route::patch('users/resetpassword/{id}',[UserController::class, 'resetPassword']);
 Route::delete('users/deleteuser/{id}', [UserController::class, 'deleteUser']);
 Route::post('signup', [UserController::class, 'createUser']);
-Route::post('signin', [UserController::class, 'signIn'])->middleware("auth:sanctum", "ability:login");
+Route::post('signin', [UserController::class, 'signIn']);//->middleware("auth:sanctum", "ability:login");
 
 Route::get('products', [ProductController::class, 'getProducts']);
 Route::get("products/{id}", [ProductController::class, 'getProductById']);
-Route::post('products/', [ProductController::class, 'createProduct']);
+Route::post('products', [ProductController::class, 'createProduct']);
 Route::delete('products/{id}', [ProductController::class, 'deleteProduct']);
 Route::patch('products/{id}', [ProductController::class, 'updateProduct']);
+Route::post('products/{id}/review', [ReviewController::class, 'postReview']);
+Route::get('categories', [ProductController::class, 'getCategories']);
+Route::get('products/{id}/review', [ReviewController::class, 'getReviews']);//mozda suvisno
 
 Route::get('orders', [OrderController::class, 'getOrders']);
 Route::get('orders/{id}',[OrderController::class, 'getOrderById']);

@@ -20,8 +20,8 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->integer('price');
             $table->integer('count_in_stock');
-            $table->double('rating');
-            $table->integer('num_of_reviews');
+            $table->double('rating')->nullable();
+            $table->integer('num_of_reviews')->default(0);
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });

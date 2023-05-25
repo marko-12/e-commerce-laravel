@@ -12,10 +12,10 @@ class Review extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name',
         'comment',
         'rating',
-        'product_id'
+        'product_id',
+        'user_id'
     ];
 
     protected $table = 'reviews';
@@ -26,5 +26,13 @@ class Review extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function user() : BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }

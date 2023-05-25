@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Product extends Authenticatable
+class Product extends Model
 {
     use HasFactory;
 
@@ -38,11 +40,12 @@ class Product extends Authenticatable
         return $this->hasMany(Review::class);
     }
 
+
     /**
-     * @return HasMany
+     * @return BelongsToMany
      */
-    public function order_item() : HasMany
+    public function order() : BelongsToMany
     {
-        return $this->hasMany(OrderItem::class);
+        return $this->belongsToMany(Order::class, 'order_items')->withPivot('quantity')->withTimestamps();
     }
 }

@@ -22,12 +22,16 @@ class UserController extends Controller
     }
     public function createUser(Request $request)
     {
-        $request->validate(['name' => 'required|string', 'email' => 'required|string|unique:users,email', 'password' => 'required|string']);
+        $request->validate([
+            'name' => 'required|string',
+            'email' => 'required|string|unique:users,email',
+            'password' => 'required|string'
+        ]);
 
         $name = $request->name;
         $email = $request->email;
         $password = bcrypt($request->password);
-        if($newUser = User::factory()->create(['name' => $name, 'email' => $email, 'password' => $password]))
+        if($newUser = User::create(['name' => $name, 'email' => $email, 'password' => $password]))
         {
             if ($token = $newUser->createToken("access_token", ["login"]))
             {
@@ -86,7 +90,7 @@ class UserController extends Controller
         {
             if (Hash::check($request->password, $user->password))
             {
-                return ("Successful Sign In ");
+                return response()->json($user);
             }
             else
             {
