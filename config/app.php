@@ -125,6 +125,9 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
+    'client_secret' => env('APP_OAUTH_CLIENT_SECRET'),
+    'client_secret_id' => env('APP_OAUTH_CLIENT_SECRET_ID', 2),
+
     /*
     |--------------------------------------------------------------------------
     | Maintenance Mode Driver

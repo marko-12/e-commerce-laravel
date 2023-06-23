@@ -49,6 +49,7 @@ Route::patch('products/{id}', [ProductController::class, 'updateProduct']);
 Route::post('products/{id}/review', [ReviewController::class, 'postReview']);
 Route::get('categories', [ProductController::class, 'getCategories']);
 Route::get('products/{id}/review', [ReviewController::class, 'getReviews']);//mozda suvisno
+Route::get('search', [ProductController::class, 'searchProducts']);
 
 Route::get('orders', [OrderController::class, 'getOrders']);
 Route::get('orders/{id}',[OrderController::class, 'getOrderById']);

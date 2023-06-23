@@ -22,7 +22,7 @@ class ProductController extends Controller
 
         foreach ($reviews as $review)
         {
-            $user = $review->user()->get('name');
+            $user = $review->user()->get();
             $users->push($user->first());
         }
 
@@ -101,7 +101,55 @@ class ProductController extends Controller
     public function getCategories()
     {
         $categories = Product::distinct('category')->pluck('category');
-        //$categories = Product::all();
         return response()->json($categories);
+    }
+
+    public function searchProducts(Request $request)
+    {
+        $PAGE_SIZE = 3;
+        $pageSize = $request->input('pageSize', $PAGE_SIZE);
+        $page = $request->input('page', 1);
+        $category = $request->input('category', '');
+        $price = $request->input('price', '');
+        $rating = $request->input('rating', '');
+        $order = $request->input('order', '');
+        $searchQuery = $request->input('query', '');
+
+        $queryFilter = $searchQuery && $searchQuery !== 'all' ? ['name' => ['$regex' => $searchQuery, '$options' => 'i']] : [];
+        $searchFilter = $searchQuery && $searchQuery !== 'all' ? $searchQuery : '';
+        $categoryFilter = $category && $category !== 'all' ? ['category' => $category] : [];
+        $ratingFilter = $rating && $rating !== 'all' ? ['rating' => ['$gte' => (int)$rating]] : [];
+        $priceFilter = $price && $price !== 'all' ? ['price' => ['$gte' => (int)explode('-', $price)[0], '$lte' => (int)explode('-', $price)[1]]] : [];
+
+        $sortOrder = $order === 'featured' ? ['featured' => -1] :
+            ($order === 'lowest' ? ['price' => 1] :
+                ($order === 'highest' ? ['price' => -1] :
+                    ($order === 'toprated' ? ['rating' => -1] :
+                        ($order === 'newest'
+            ? ['createdAt' => -1]
+            : ['_id' => -1]))));
+
+        $products = Product::where('name', 'LIKE', '%'.$searchFilter.'%')
+            //Product::where($queryFilter)
+            ->where($categoryFilter)
+            ->where($priceFilter)
+            ->where($ratingFilter)
+            ->get()
+            ->sortBy($sortOrder)
+            ->skip($pageSize * ($page - 1))
+            ->take($pageSize);
+
+        $countProducts = Product::where($queryFilter)
+            ->where($categoryFilter)
+            ->where($priceFilter)
+            ->where($ratingFilter)
+            ->count();
+
+        return response()->json([
+            'products' => $products,
+            'countProducts' => $countProducts,
+            'page' => $page,
+            'pages' => ceil($countProducts / $pageSize),
+        ]);
     }
 }
