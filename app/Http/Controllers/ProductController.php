@@ -146,14 +146,26 @@ class ProductController extends Controller
 //        $products = Product::filter($request->all())
 //            ->paginate(2)
 //            ->appends(request()->query());
-        $products = Product::filter($request)->get();
-        //echo 'ty';
+        //$products = Product::filter($request->all())->get();
 
-        $countProducts = Product::filter($request->all())->count();
+        $products = Product::filter($request->all());
+
+        if (key_exists('priceFrom', $request->all())) {
+            $products->where('price', '>=', $request['priceFrom']);
+        }
+
+        if (key_exists('priceTo', $request->all())) {
+            $products->where('price', '<=', $request['priceTo']);
+        }
+
+        $products = $products->get();
+
+        //$countProducts = Product::filter($request->all())->count();
+        $countProducts = $products->count();
 
         return response()->json([
             'products' => $products,
-            //'countProducts' => $countProducts,
+            'countProducts' => $countProducts,
 //            'page' => $page,
 //            'pages' => ceil($countProducts / $pageSize),
         ]);

@@ -29,6 +29,12 @@ class Product extends Model
     protected $likeFilterFields = [
         'name'
     ];
+    protected $largerThanFields = [
+        'rating'
+    ];
+    protected $betweenFields = [
+        'price'
+    ];
 
     protected $table = 'products';
 
@@ -46,7 +52,11 @@ class Product extends Model
 
             if (in_array($field, $this->likeFilterFields)) {
                 $builder->where($tableName . '.' . $field, 'LIKE', "%$value%");
-            } else if (is_array($value)) {
+            }
+            else if (in_array($field, $this->largerThanFields)){
+                $builder->where($tableName . '.' . $field, '>=', $value);
+            }
+            else if (is_array($value)) {
                 $builder->whereIn($field, $value);
             } else {
                 $builder->where($field, $value);
