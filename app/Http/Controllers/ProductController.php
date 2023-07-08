@@ -12,7 +12,11 @@ class ProductController extends Controller
     public function getProducts()
     {
         return response()->json(Product::all());
-        //return response(Product::all(),200);
+    }
+    public function getProductsPaginated()
+    {
+        $products = Product::get()->toQuery()->paginate(2);
+        return response($products,200);
     }
     public function getProductById($id)
     {
@@ -73,8 +77,8 @@ class ProductController extends Controller
                 'description' => 'required|string',
                 'price' => 'required|int',
                 'count_in_stock' => 'required|int',
-                'rating' => 'required|int',
-                'num_of_reviews' => 'required|int'
+                //'rating' => 'required|int',
+                //'num_of_reviews' => 'required|int'
             ]);
 
             if ($product->update([
@@ -85,8 +89,8 @@ class ProductController extends Controller
                 'description' => $request->description,
                 'price' => $request->price,
                 'count_in_stock' => $request->count_in_stock,
-                'rating' => $request->rating,
-                'num_of_reviews' => $request->num_of_reviews,
+                //'rating' => $request->rating,
+                //'num_of_reviews' => $request->num_of_reviews,
             ]))
             {
                 return response('Product successfully updated', 200);

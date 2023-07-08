@@ -42,6 +42,7 @@ Route::post('signup', [UserController::class, 'createUser']);
 Route::post('signin', [UserController::class, 'signIn']);//->middleware("auth:sanctum", "ability:login");
 
 Route::get('products', [ProductController::class, 'getProducts']);
+Route::get('products_paginated',[ProductController::class, 'getProductsPaginated']);
 Route::get("products/{id}", [ProductController::class, 'getProductById']);
 Route::post('products', [ProductController::class, 'createProduct']);
 Route::delete('products/{id}', [ProductController::class, 'deleteProduct']);
