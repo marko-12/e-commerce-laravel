@@ -6,6 +6,7 @@ use App\Http\Requests\ProductRequest;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class ProductController extends Controller
 {
@@ -40,11 +41,11 @@ class ProductController extends Controller
         $user = User::find($request->user_id);
         if ($user->product()->create($validated))
         {
-            return response('Successfully created new product', 200);
+            return response()->json(["message" => " Product created successfully"], Response::HTTP_OK);
         }
         else
         {
-            return response('Error creating product', 404);
+            return response()->json(["message" => "Error while creating product"], Response::HTTP_NOT_FOUND);
         }
     }
     public function deleteProduct($id)
@@ -53,16 +54,16 @@ class ProductController extends Controller
         {
             if ($product->delete())
             {
-                return response('Product successfully deleted', 200);
+                return response()->json(["message" => "Product successfully deleted"], Response::HTTP_OK);
             }
             else
             {
-                return response('Error while deleting product', 404);
+                return response()->json(["message" => "Error while deleting product"], Response::HTTP_NOT_FOUND);
             }
         }
         else
         {
-            return response('The product does not exist!', 404);
+            return response()->json(["message" => "The product does not exist!"], 404);
         }
     }
     public function updateProduct(Request $request, $id)
@@ -93,12 +94,12 @@ class ProductController extends Controller
                 //'num_of_reviews' => $request->num_of_reviews,
             ]))
             {
-                return response('Product successfully updated', 200);
+                return response()->json(["message" => "Product successfully updated"], Response::HTTP_OK);
             }
         }
         else
         {
-            return response('The product does not exist', 404);
+            return response(['message' => "The product does not exist"], Response::HTTP_NOT_FOUND);
         }
     }
 

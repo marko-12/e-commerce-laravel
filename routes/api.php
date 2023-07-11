@@ -36,8 +36,9 @@ Route::get('/test', function (){
 
 Route::get('users', [UserController::class, 'getUsers']);
 Route::get('users/{id}', [UserController::class, 'getUserById']);
-Route::patch('users/resetpassword/{id}',[UserController::class, 'resetPassword']);
-Route::delete('users/deleteuser/{id}', [UserController::class, 'deleteUser']);
+Route::patch('users/{id}',[UserController::class, 'changeUser']);//Admin Changes the user(privilege)
+Route::patch('profile/{id}',[UserController::class, 'updateProfile']);
+Route::delete('users/{id}', [UserController::class, 'deleteUser']);
 Route::post('signup', [UserController::class, 'createUser']);
 Route::post('signin', [UserController::class, 'signIn']);//->middleware("auth:sanctum", "ability:login");
 

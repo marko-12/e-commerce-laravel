@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use http\Params;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -42,31 +43,55 @@ class UserController extends Controller
             }
             else
             {
-                return response('Error while creating user token', 404);
+                return response()->json(["message" => "Error while creating user token"], Response::HTTP_NOT_FOUND);
             }
             //return ('Successfully created new user');
         }
         else
         {
-            return response('Error while creating new user', 404);
+            return response()->json(["message" => "Error while creating new user"], Response::HTTP_NOT_FOUND);
         }
     }
-    public function resetPassword(Request $request, $id)
+    public function updateProfile(Request $request, $id)
     {
-        $request->validate(['name' => 'required|string', 'password' => 'required|string']);
+        $request->validate([
+            'name' => 'required|string',
+            'email' => 'required|string|unique:users,email',
+            'password' => 'required|string'
+        ]);
 
         $name = $request->name;
+        $email = $request->email;
         $password = bcrypt($request->password);
         if (User::find($id)->update([
             'name' => $name,
+            'email' =>$email,
             'password' => $password
         ]))
         {
-            return response("User successfully updated", 200);
+            $updatedUser = User::find($id);
+            return response()->json($updatedUser, Response::HTTP_OK);
         }
         else
         {
-            return response("Error while updating user", 404);
+            return response()->json(["message" => "Error while updating user"], Response::HTTP_NOT_FOUND);
+        }
+    }
+
+    public function changeUser(Request $request, $id)
+    {
+        if ($user = User::find($id))
+        {
+            $user->update([
+                'name' => $request->name,
+                'email' => $request->email,
+                'isAdmin' => $request->isAdmin
+            ]);
+            return response()->json(["message" => "User successfully updated !"], Response::HTTP_OK);
+        }
+        else
+        {
+            return response()->json(["message" => "User not found"], Response::HTTP_NOT_FOUND);
         }
     }
 
@@ -74,11 +99,11 @@ class UserController extends Controller
     {
         if (User::find($id)->delete())
         {
-            return response('User successfully deleted', 200);
+            return response()->json(["message" => "User successfully deleted"], Response::HTTP_OK);
         }
         else
         {
-            return response('Error while deleting user', 404);
+            return response()->json(["message" => "Error while deleting user"], Response::HTTP_NOT_FOUND);
         }
     }
     public function signIn(Request $request)
@@ -94,12 +119,12 @@ class UserController extends Controller
             }
             else
             {
-                return response("Wrong Password", 401);
+                return response()->json(["message" => "Wrong Password"], Response::HTTP_UNAUTHORIZED);
             }
         }
         else
         {
-            return response('User not found', 401);
+            return response()->json(["message" => "User not found"], Response::HTTP_UNAUTHORIZED);
         }
     }
 }
