@@ -78,6 +78,23 @@ class UserController extends Controller
         }
     }
 
+    public function resetPassword(Request $request, $id)
+    {
+        $request->validate(['password' => 'required|string|min:8']);
+        $password = bcrypt($request->password);
+
+        if (User::find($id)->update([
+            'password' => $password
+        ]))
+        {
+            return response()->json(["message" => "Password reset successfully !"], Response::HTTP_OK);
+        }
+        else
+        {
+            return response()->json(["message" => "Error while resetting password"], Response::HTTP_NOT_FOUND);
+        }
+    }
+
     public function changeUser(Request $request, $id)
     {
         if ($user = User::find($id))
@@ -108,7 +125,10 @@ class UserController extends Controller
     }
     public function signIn(Request $request)
     {
-        $request->validate(['email' => 'required|string', 'password' => 'required|string']);
+        $request->validate([
+            'email' => 'required|string',
+            'password' => 'required|string|min:8'
+        ]);
 
         $email = $request->email;
         if ($user = User::where('email', $email)->first())
