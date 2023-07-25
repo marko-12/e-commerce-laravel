@@ -57,7 +57,7 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string',
             'email' => 'required|string|unique:users,email',
-            'password' => 'required|string'
+            //'password' => 'required|string'
         ]);
 
         $name = $request->name;
@@ -66,7 +66,7 @@ class UserController extends Controller
         if (User::find($id)->update([
             'name' => $name,
             'email' =>$email,
-            'password' => $password
+            //'password' => $password
         ]))
         {
             $updatedUser = User::find($id);

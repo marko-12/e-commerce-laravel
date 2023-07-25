@@ -16,6 +16,7 @@ class Order extends Model
         'country',
         'city',
         'address',
+        'postal_code',
         'delivered',
         'deliver_at',
         'user_id'

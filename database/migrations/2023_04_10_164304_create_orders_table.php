@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('country');
             $table->string('city');
             $table->string('address');
+            $table->integer('postal_code');
             $table->boolean('delivered')->default(false);
             $table->dateTime('delivered_at')->nullable();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
