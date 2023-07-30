@@ -23,6 +23,11 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->registerPolicies();
+
+        Passport::tokensExpireIn(now()->addDays(1));
+        Passport::personalAccessTokensExpireIn(now()->addDays(1));
+
         //Passport::loadKeysFrom(__DIR__.'/../secrets/oauth');
     }
 }

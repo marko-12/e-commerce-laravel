@@ -24,7 +24,7 @@ class OrderRequest extends FormRequest
         return [
             'country' => 'required|string',
             'city' => 'required|string',
-            'postal_code' => 'required|string',
+            'postal_code' => 'required|int',
             'address' => 'required|string',
             'order_items' => 'required|array',
             'user_id' => 'required|int'
