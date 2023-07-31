@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use http\Params;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
@@ -12,47 +13,17 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function getUsers() : Collection
+    public function index() : Collection
     {
         return User::all();
     }
-    public function getUserById($id)
+    public function show($id)
     {
         //return $user = DB::table('users')->where('id', $id)->first();
         return $user = User::where('id',$id)->first();
     }
-    public function createUser(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|string|unique:users,email',
-            'password' => 'required|string'
-        ]);
 
-        $name = $request->name;
-        $email = $request->email;
-        $password = bcrypt($request->password);
-        if($newUser = User::create(['name' => $name, 'email' => $email, 'password' => $password]))
-        {
-            if ($token = $newUser->createToken("access_token", ["login"]))
-            {
-                return [
-                    'user' => $newUser,
-                    'token' => $token->plainTextToken
-                ];
-            }
-            else
-            {
-                return response()->json(["message" => "Error while creating user token"], Response::HTTP_NOT_FOUND);
-            }
-            //return ('Successfully created new user');
-        }
-        else
-        {
-            return response()->json(["message" => "Error while creating new user"], Response::HTTP_NOT_FOUND);
-        }
-    }
-    public function updateProfile(Request $request, $id)
+    public function update(Request $request, $id)
     {
         $request->validate([
             'name' => 'required|string',
@@ -112,7 +83,7 @@ class UserController extends Controller
         }
     }
 
-    public function deleteUser($id)
+    public function destroy($id)
     {
         if (User::find($id)->delete())
         {
@@ -121,30 +92,6 @@ class UserController extends Controller
         else
         {
             return response()->json(["message" => "Error while deleting user"], Response::HTTP_NOT_FOUND);
-        }
-    }
-    public function signIn(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|string',
-            'password' => 'required|string|min:8'
-        ]);
-
-        $email = $request->email;
-        if ($user = User::where('email', $email)->first())
-        {
-            if (Hash::check($request->password, $user->password))
-            {
-                return response()->json($user);
-            }
-            else
-            {
-                return response()->json(["message" => "Wrong Password"], Response::HTTP_UNAUTHORIZED);
-            }
-        }
-        else
-        {
-            return response()->json(["message" => "User not found"], Response::HTTP_UNAUTHORIZED);
         }
     }
 }

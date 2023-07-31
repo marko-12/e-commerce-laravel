@@ -10,16 +10,16 @@ use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    public function getOrders()
+    public function index()
     {
         return response(Order::all(), 200);
     }
 
-    public function getOrderById($id)
+    public function show($id)
     {
         return response(Order::find($id), 200);
     }
-    public function createOrder(OrderRequest $request)
+    public function store(OrderRequest $request)
     {
         $validated = $request->validated();
 

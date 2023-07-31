@@ -10,7 +10,7 @@ use Illuminate\Http\Response;
 
 class ProductController extends Controller
 {
-    public function getProducts()
+    public function index()
     {
         return response()->json(Product::all());
     }
@@ -19,7 +19,7 @@ class ProductController extends Controller
         $products = Product::get()->toQuery()->paginate(2);
         return response($products,200);
     }
-    public function getProductById($id)
+    public function show($id)
     {
         $product = Product::find($id);
         $reviews = $product->review()->get();
@@ -33,7 +33,7 @@ class ProductController extends Controller
 
         return response()->json([$product, $reviews , $users]);
     }
-    public function createProduct(ProductRequest $request)
+    public function store(ProductRequest $request)
     {
 
         $validated = $request->validated();
@@ -48,7 +48,7 @@ class ProductController extends Controller
             return response()->json(["message" => "Error while creating product"], Response::HTTP_NOT_FOUND);
         }
     }
-    public function deleteProduct($id)
+    public function destroy($id)
     {
         if ($product = Product::find($id))
         {
@@ -66,7 +66,7 @@ class ProductController extends Controller
             return response()->json(["message" => "The product does not exist!"], 404);
         }
     }
-    public function updateProduct(Request $request, $id)
+    public function update(Request $request, $id)
     {
         if ($product = Product::find($id))
         {
