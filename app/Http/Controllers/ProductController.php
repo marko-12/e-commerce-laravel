@@ -17,7 +17,7 @@ class ProductController extends Controller
     public function getProductsPaginated()
     {
         $products = Product::get()->toQuery()->paginate(2);
-        return response($products,200);
+        return response()->json($products,Response::HTTP_OK);
     }
     public function show($id)
     {
@@ -41,7 +41,7 @@ class ProductController extends Controller
         $user = User::find($request->user_id);
         if ($user->product()->create($validated))
         {
-            return response()->json(["message" => " Product created successfully"], Response::HTTP_OK);
+            return response()->json(["message" => "Product created successfully"], Response::HTTP_OK);
         }
         else
         {
@@ -50,20 +50,13 @@ class ProductController extends Controller
     }
     public function destroy($id)
     {
-        if ($product = Product::find($id))
+        if (Product::find($id)->delete())
         {
-            if ($product->delete())
-            {
-                return response()->json(["message" => "Product successfully deleted"], Response::HTTP_OK);
-            }
-            else
-            {
-                return response()->json(["message" => "Error while deleting product"], Response::HTTP_NOT_FOUND);
-            }
+            return response()->json(["message" => "Product successfully deleted"], Response::HTTP_OK);
         }
         else
         {
-            return response()->json(["message" => "The product does not exist!"], 404);
+            return response()->json(["message" => "The product does not exist!"], Response::HTTP_NOT_FOUND);
         }
     }
     public function update(Request $request, $id)
@@ -99,7 +92,7 @@ class ProductController extends Controller
         }
         else
         {
-            return response(['message' => "The product does not exist"], Response::HTTP_NOT_FOUND);
+            return response()->json(['message' => "The product does not exist"], Response::HTTP_NOT_FOUND);
         }
     }
 

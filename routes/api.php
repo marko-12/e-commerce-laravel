@@ -37,8 +37,9 @@ Route::group(['middleware' => ['auth:api']], function() {
 //    Route::delete('users/{id}', [UserController::class, 'deleteUser']);
     Route::patch('change-user/{id}',[UserController::class, 'changeUser']);//Admin Changes the user(privilege)
     Route::patch('reset-password/{id}', [UserController::class, 'resetPassword']);
+    Route::get('user-info', [UserController::class, 'userInfo']);
+    Route::get('temp', [UserController::class, 'temp']);
 
-    Route::apiResource('products', ProductController::class);
 
     //Route::get('products', [ProductController::class, 'getProducts']);
     Route::get('products_paginated',[ProductController::class, 'getProductsPaginated']);
@@ -47,13 +48,16 @@ Route::group(['middleware' => ['auth:api']], function() {
     //Route::delete('products/{id}', [ProductController::class, 'deleteProduct']);
     //Route::patch('products/{id}', [ProductController::class, 'updateProduct']);
     Route::post('products/{id}/review', [ReviewController::class, 'postReview']);
-    Route::get('categories', [ProductController::class, 'getCategories']);
     Route::get('products/{id}/review', [ReviewController::class, 'getReviews']);//mozda suvisno
     Route::get('search', [ProductController::class, 'searchProducts']);
 
     Route::apiResource('orders', OrderController::class);
+    Route::get('orders/my/{id}', [OrderController::class, 'myOrders']);
 
     //Route::get('orders', [OrderController::class, 'getOrders']);
     //Route::get('orders/{id}',[OrderController::class, 'getOrderById']);
     //Route::post('orders', [OrderController::class, 'createOrder']);
 });
+
+Route::apiResource('products', ProductController::class);
+Route::get('categories', [ProductController::class, 'getCategories']);

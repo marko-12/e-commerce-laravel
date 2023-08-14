@@ -10,6 +10,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -27,7 +28,7 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required|string',
-            'email' => 'required|string|unique:users,email',
+            'email' => 'required|string|email',
             //'password' => 'required|string'
         ]);
 
@@ -41,7 +42,7 @@ class UserController extends Controller
         ]))
         {
             $updatedUser = User::find($id);
-            return response()->json($updatedUser, Response::HTTP_OK);
+            return response()->json(["message" => "User successfully updated", "updated_user" => $updatedUser], Response::HTTP_OK);
         }
         else
         {
@@ -51,14 +52,17 @@ class UserController extends Controller
 
     public function resetPassword(Request $request, $id)
     {
-        $request->validate(['password' => 'required|string|min:8']);
+        $request->validate([
+            'password' => 'required|string|min:8'
+        ]);
+
         $password = bcrypt($request->password);
 
         if (User::find($id)->update([
             'password' => $password
         ]))
         {
-            return response()->json(["message" => "Password reset successfully !"], Response::HTTP_OK);
+            return response()->json(["message" => "Password reset successfully"], Response::HTTP_OK);
         }
         else
         {
@@ -93,5 +97,17 @@ class UserController extends Controller
         {
             return response()->json(["message" => "Error while deleting user"], Response::HTTP_NOT_FOUND);
         }
+    }
+    public function userInfo()
+    {
+//        if ($user = User::where('email', $request->email)->first())
+//        {
+//            return response()->json($user);
+//        }
+//        else
+//        {
+//            return response()->json(["message" => "Error while getting user info"], Response::HTTP_NOT_FOUND);
+//        }
+        return response()->json(auth()->user());
     }
 }
