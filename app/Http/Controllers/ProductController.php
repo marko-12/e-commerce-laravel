@@ -35,12 +35,18 @@ class ProductController extends Controller
     }
     public function store(ProductRequest $request)
     {
+        /** @var User $user */
+        $user = auth()->user();
 
-        $validated = $request->validated();
-
-        $user = User::find($request->user_id);
-        if ($user->product()->create($validated))
+        if ($newProduct = $user->product()->create($request->except('image')))
         {
+            if (array_key_exists('image', $request->validated())) {
+                $imageFileName = md5($request->file('image')->getClientOriginalName()) . '.' .
+                    $request->file('image')->getClientOriginalExtension();
+                $file = $newProduct->addMediaFromRequest('image')
+                    ->setFileName($imageFileName)
+                    ->toMediaCollection('product-images', 'public');
+            }
             return response()->json(["message" => "Product created successfully"], Response::HTTP_OK);
         }
         else

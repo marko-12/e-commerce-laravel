@@ -59,8 +59,7 @@ Route::group(['middleware' => ['auth:api']], function() {
     //Route::get('orders/{id}',[OrderController::class, 'getOrderById']);
     //Route::post('orders', [OrderController::class, 'createOrder']);
 
-    Route::apiResource('image', ImageController::class);
+    Route::apiResource('products', ProductController::class);
 });
 
-Route::apiResource('products', ProductController::class);
 Route::get('categories', [ProductController::class, 'getCategories']);
