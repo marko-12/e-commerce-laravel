@@ -7,12 +7,20 @@ use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class ProductController extends Controller
 {
     public function index()
     {
-        return response()->json(Product::all());
+        $images = collect();
+        foreach (Product::all() as $product)
+        {
+            $image = $product->getImages();
+            $images->push($image);
+        }
+        $products = Product::all();
+        return response()->json(["products" => $products, "images" => $images]);
     }
     public function getProductsPaginated()
     {
@@ -41,17 +49,74 @@ class ProductController extends Controller
         if ($newProduct = $user->product()->create($request->except('image')))
         {
             if (array_key_exists('image', $request->validated())) {
-                $imageFileName = md5($request->file('image')->getClientOriginalName()) . '.' .
-                    $request->file('image')->getClientOriginalExtension();
-                $file = $newProduct->addMediaFromRequest('image')
-                    ->setFileName($imageFileName)
-                    ->toMediaCollection('product-images', 'public');
+                foreach ($request->image as $img)
+                {
+                    $imageFileName = md5($img->getClientOriginalName()) . '.' .
+                        $img->getClientOriginalExtension();
+                    $file = $newProduct->addMedia($img)
+                        ->setFileName($imageFileName)
+                        ->toMediaCollection('product-images', 'public');
+//                    $imageFileName = md5($request->file('image')->getClientOriginalName()) . '.' .
+//                        $request->file('image')->getClientOriginalExtension();
+//                    $file = $newProduct->addMediaFromRequest('image')
+//                        ->setFileName($imageFileName)
+//                        ->toMediaCollection('product-images', 'public');
+                }
             }
             return response()->json(["message" => "Product created successfully"], Response::HTTP_OK);
         }
         else
         {
             return response()->json(["message" => "Error while creating product"], Response::HTTP_NOT_FOUND);
+        }
+    }
+    public function update($id, Request $request)
+    {
+        if ($request->validate([
+            'name' => 'required|string',
+            'brand' => 'required|string',
+            'category' => 'required|string',
+            'price' => 'required|int',
+            'count_in_stock' => 'required|int',
+            'description' => 'nullable|string|max:255'
+            //'rating' => 'required|int',
+            //'num_of_reviews' => 'required|int'
+        ]))
+        {
+            $product = Product::find($id);
+            if (!$product)
+                return response()->json(['message' => "The product doesn't exist"], Response::HTTP_NOT_FOUND);
+
+            if ($updatedproduct = $product->update([
+                'name' => $request->name,
+                'image' => $request->image,
+                'brand' => $request->brand,
+                'category' => $request->category,
+                'description' => $request->description,
+                'price' => $request->price,
+                'count_in_stock' => $request->count_in_stock,
+                //'rating' => $request->rating,
+                //'num_of_reviews' => $request->num_of_reviews,
+            ]))
+            {
+//                if (array_key_exists('image', $request->validated()))
+//                {
+//                    foreach ($request->image as $img)
+//                    {
+//                        $imageFileName = md5($img->getClientOriginalName()) . '.' .
+//                            $img->getClientOriginalExtension();
+//                        $updatedproduct->getMedia('product-images')->destroy();
+//                        $file = $updatedproduct->addMedia($img)
+//                            ->setFileName($imageFileName)
+//                            ->toMediaCollection('product-images', 'public');
+//                    }
+//                }
+                return response()->json(["message" => "Product successfully updated"], Response::HTTP_OK);
+            }
+        }
+        else
+        {
+            return response()->json(['message' => "Error while updating product"], Response::HTTP_NOT_FOUND);
         }
     }
     public function destroy($id)
@@ -65,43 +130,6 @@ class ProductController extends Controller
             return response()->json(["message" => "The product does not exist!"], Response::HTTP_NOT_FOUND);
         }
     }
-    public function update(Request $request, $id)
-    {
-        if ($product = Product::find($id))
-        {
-            $request->validate([
-                'name' => 'required|string',
-                'image' => 'required|string',
-                'brand' => 'required|string',
-                'category' => 'required|string',
-                'description' => 'required|string',
-                'price' => 'required|int',
-                'count_in_stock' => 'required|int',
-                //'rating' => 'required|int',
-                //'num_of_reviews' => 'required|int'
-            ]);
-
-            if ($product->update([
-                'name' => $request->name,
-                'image' => $request->image,
-                'brand' => $request->brand,
-                'category' => $request->category,
-                'description' => $request->description,
-                'price' => $request->price,
-                'count_in_stock' => $request->count_in_stock,
-                //'rating' => $request->rating,
-                //'num_of_reviews' => $request->num_of_reviews,
-            ]))
-            {
-                return response()->json(["message" => "Product successfully updated"], Response::HTTP_OK);
-            }
-        }
-        else
-        {
-            return response()->json(['message' => "The product does not exist"], Response::HTTP_NOT_FOUND);
-        }
-    }
-
     public function getCategories()
     {
         $categories = Product::distinct('category')->pluck('category');

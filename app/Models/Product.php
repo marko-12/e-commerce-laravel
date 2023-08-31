@@ -10,6 +10,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Product extends Model implements HasMedia
 {
@@ -18,7 +19,6 @@ class Product extends Model implements HasMedia
 
     protected $fillable = [
         'name',
-        'image',
         'category',
         'description',
         'brand',
@@ -40,6 +40,14 @@ class Product extends Model implements HasMedia
     ];
 
     protected $table = 'products';
+
+    public function getImages(): mixed
+    {
+//        return $this->media()
+//            ->where('model_id', $this->id)
+//            ->get();
+        return Product::find($this->id)->getMedia('product-images');
+    }
 
     public function scopeFilter($builder, $filters = [])
     {
