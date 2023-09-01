@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductRequest;
+use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -13,14 +14,7 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $images = collect();
-        foreach (Product::all() as $product)
-        {
-            $image = $product->getImages();
-            $images->push($image);
-        }
-        $products = Product::all();
-        return response()->json(["products" => $products, "images" => $images]);
+        return ProductResource::collection(Product::all());
     }
     public function getProductsPaginated()
     {
@@ -62,8 +56,8 @@ class ProductController extends Controller
 //                        ->setFileName($imageFileName)
 //                        ->toMediaCollection('product-images', 'public');
                 }
+                return response()->json(["message" => "Product created successfully"], Response::HTTP_OK);
             }
-            return response()->json(["message" => "Product created successfully"], Response::HTTP_OK);
         }
         else
         {

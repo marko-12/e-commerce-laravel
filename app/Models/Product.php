@@ -43,10 +43,10 @@ class Product extends Model implements HasMedia
 
     public function getImages(): mixed
     {
-//        return $this->media()
-//            ->where('model_id', $this->id)
-//            ->get();
-        return Product::find($this->id)->getMedia('product-images');
+        return $this->media()
+            ->where('model_id', $this->id)
+            ->get();
+        //return Product::find($this->id)->getMedia('product-images');
     }
 
     public function scopeFilter($builder, $filters = [])
