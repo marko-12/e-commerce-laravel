@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class ProductController extends Controller
@@ -33,7 +34,7 @@ class ProductController extends Controller
             $users->push($user->first());
         }
 
-        return response()->json([$product, $reviews , $users]);
+        return response()->json(["product" => new ProductResource($product), "reviews" => $reviews , "users" => $users]);
     }
     public function store(ProductRequest $request)
     {
@@ -136,8 +137,6 @@ class ProductController extends Controller
 
         //$products = Product::filter($request->all())->get();
 
-        //$products = Product::filter($request->all());
-
         if (key_exists('priceFrom', $request->all())) {
             $products->where('price', '>=', $request['priceFrom']);
         }
@@ -147,16 +146,13 @@ class ProductController extends Controller
         }
         $products = $products->paginate(2)
             ->appends(request()->query());
-
-
-        //$products = $products->get();
+        $products = ProductResource::collection($products)->response()->getData(true);
 
         //$countProducts = Product::filter($request->all())->count();
-        $countProducts = $products->count();
+        //$countProducts = count($products);
 
         return response()->json([
             'products' => $products,
-            'countProducts' => $countProducts,
 //            'page' => $page,
 //            'pages' => ceil($countProducts / $pageSize),
         ]);
