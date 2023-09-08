@@ -51,11 +51,6 @@ class ProductController extends Controller
                     $file = $newProduct->addMedia($img)
                         ->setFileName($imageFileName)
                         ->toMediaCollection('product-images', 'public');
-//                    $imageFileName = md5($request->file('image')->getClientOriginalName()) . '.' .
-//                        $request->file('image')->getClientOriginalExtension();
-//                    $file = $newProduct->addMediaFromRequest('image')
-//                        ->setFileName($imageFileName)
-//                        ->toMediaCollection('product-images', 'public');
                 }
                 return response()->json(["message" => "Product created successfully"], Response::HTTP_OK);
             }
@@ -74,8 +69,6 @@ class ProductController extends Controller
             'price' => 'required|int',
             'count_in_stock' => 'required|int',
             'description' => 'nullable|string|max:255'
-            //'rating' => 'required|int',
-            //'num_of_reviews' => 'required|int'
         ]))
         {
             $product = Product::find($id);

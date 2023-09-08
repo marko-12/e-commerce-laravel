@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\OrderRequest;
+use App\Http\Resources\OrderProductResource;
+use App\Http\Resources\ProductResource;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -30,7 +32,7 @@ class OrderController extends Controller
         $order = Order::find($id);
         $user = $order?->user()->get()->first();
         $orderItems = $order?->product()->get();
-        return response()->json(["order" => $order, "user" => $user , "order_items" => $orderItems], Response::HTTP_OK);
+        return response()->json(["order" => $order, "user" => $user , "order_items" => OrderProductResource::collection($orderItems)], Response::HTTP_OK);
     }
     public function store(OrderRequest $request)
     {
@@ -48,6 +50,14 @@ class OrderController extends Controller
         {
             return response()->json(["message" => "Error while creating order"], Response::HTTP_NOT_FOUND);
         }
+    }
+
+    public function update($id, Request $request)
+    {
+        $request->validate([
+            "delivered" => 'required|bool',
+            "paid" => 'required|bool',
+        ]);
     }
 
     public function destroy($id)

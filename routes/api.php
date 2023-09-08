@@ -55,12 +55,11 @@ Route::group(['middleware' => ['auth:api']], function() {
     Route::apiResource('orders', OrderController::class);
     Route::get('orders/my/{id}', [OrderController::class, 'myOrders']);
 
-    Route::apiResource('products', ProductController::class);
-
     //Route::get('orders', [OrderController::class, 'getOrders']);
     //Route::get('orders/{id}',[OrderController::class, 'getOrderById']);
     //Route::post('orders', [OrderController::class, 'createOrder']);
 
 });
 
+Route::apiResource('products', ProductController::class);
 Route::get('categories', [ProductController::class, 'getCategories']);

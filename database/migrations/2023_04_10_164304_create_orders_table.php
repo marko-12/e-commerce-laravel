@@ -19,6 +19,8 @@ return new class extends Migration
             $table->integer('postal_code');
             $table->boolean('delivered')->default(false);
             $table->dateTime('delivered_at')->nullable();
+            $table->boolean('paid')->default(false);
+            $table->dateTime('delivered_at')->nullable();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
