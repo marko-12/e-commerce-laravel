@@ -7,6 +7,7 @@ use App\Http\Resources\OrderProductResource;
 use App\Http\Resources\ProductResource;
 use App\Models\Order;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -58,6 +59,33 @@ class OrderController extends Controller
             "delivered" => 'required|bool',
             "paid" => 'required|bool',
         ]);
+
+        $order = Order::find($id);
+
+        if (!$order)
+            return response()->json(['message' => "The order doesn't exist"], Response::HTTP_NOT_FOUND);
+
+        if ($request->delivered){
+            $delivered_at = Carbon::now();
+        }
+        else{
+            $delivered_at = null;
+        }
+        if ($request->paid){
+            $paid_at = Carbon::now();
+        }
+        else{
+            $paid_at = null;
+        }
+        if ($order->update([
+            "delivered" => $request->delivered,
+            "paid" => $request->paid,
+            "delivered_at" => $delivered_at,
+            "paid_at" => $paid_at
+        ]))
+        {
+            return response()->json(["message" => "Successfully updated order"]);
+        }
     }
 
     public function destroy($id)

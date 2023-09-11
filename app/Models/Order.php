@@ -18,7 +18,9 @@ class Order extends Model
         'address',
         'postal_code',
         'delivered',
-        'deliver_at',
+        'delivered_at',
+        'paid',
+        'paid_at',
         'user_id'
     ];
 

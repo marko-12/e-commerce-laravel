@@ -32,10 +32,7 @@ Route::group(['prefix' => 'auth'], function () {
 
 Route::group(['middleware' => ['auth:api']], function() {
     Route::apiResource('users', UserController::class);
-//    Route::get('users', [UserController::class, 'getUsers']);
-//    Route::get('users/{id}', [UserController::class, 'getUserById']);
-//    Route::patch('profile/{id}',[UserController::class, 'updateProfile']);
-//    Route::delete('users/{id}', [UserController::class, 'deleteUser']);
+
     Route::patch('change-user/{id}',[UserController::class, 'changeUser']);//Admin Changes the user(privilege)
     Route::patch('reset-password/{id}', [UserController::class, 'resetPassword']);
     Route::get('user-info', [UserController::class, 'userInfo']);
@@ -55,11 +52,14 @@ Route::group(['middleware' => ['auth:api']], function() {
     Route::apiResource('orders', OrderController::class);
     Route::get('orders/my/{id}', [OrderController::class, 'myOrders']);
 
-    //Route::get('orders', [OrderController::class, 'getOrders']);
-    //Route::get('orders/{id}',[OrderController::class, 'getOrderById']);
-    //Route::post('orders', [OrderController::class, 'createOrder']);
 
+    Route::post('products', [ProductController::class, 'store']);
+    Route::patch('products/{id}', [ProductController::class, 'update']);
 });
 
-Route::apiResource('products', ProductController::class);
 Route::get('categories', [ProductController::class, 'getCategories']);
+
+//Route::apiResource('products', ProductController::class);
+
+Route::get('products', [ProductController::class, 'index']);
+Route::get('products/{id}', [ProductController::class, 'show']);
