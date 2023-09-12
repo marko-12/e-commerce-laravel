@@ -15,13 +15,13 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('brand');
-            $table->string('category');
             $table->string('description')->nullable();
             $table->integer('price');
             $table->integer('count_in_stock');
             $table->double('rating')->nullable();
             $table->integer('num_of_reviews')->default(0);
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('category_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

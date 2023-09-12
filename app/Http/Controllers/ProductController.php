@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductRequest;
 use App\Http\Resources\ProductResource;
+use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ class ProductController extends Controller
     }
     public function getProductsPaginated()
     {
-        $products = Product::get()->toQuery()->paginate(2);
+        $products = Product::get()->toQuery()->paginate(10);
         return response()->json($products,Response::HTTP_OK);
     }
     public function show($id)
@@ -120,7 +121,7 @@ class ProductController extends Controller
     }
     public function getCategories()
     {
-        $categories = Product::distinct('category')->pluck('category');
+        $categories = Category::all()->pluck('name');
         return response()->json($categories);
     }
 
@@ -137,7 +138,7 @@ class ProductController extends Controller
         if (key_exists('priceTo', $request->all())) {
             $products->where('price', '<=', $request['priceTo']);
         }
-        $products = $products->paginate(2)
+        $products = $products->paginate(9)
             ->appends(request()->query());
         $products = ProductResource::collection($products)->response()->getData(true);
 

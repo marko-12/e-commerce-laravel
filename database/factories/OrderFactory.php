@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -22,7 +23,9 @@ class OrderFactory extends Factory
             'address' => fake()->address(),
             'delivered' => false,
             'delivered_at' => null,
-            'user_id' => fake()->numberBetween(1, 5)
+            'paid' => false,
+            'paid_at' => null,
+            'user_id' => User::inRandomOrder()->first()->id
         ];
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use Carbon\Carbon;
+use App\Models\Product;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -23,7 +23,7 @@ class ReviewFactory extends Factory
             'name' => fake()->name(),
             'comment' => Str::random(),
             'rating' => fake()->numberBetween(1, 5),
-            'product_id' => fake()->numberBetween(1, 5)
+            'product_id' => Product::inRandomOrder()->first()->id
         ];
     }
 }

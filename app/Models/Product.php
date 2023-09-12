@@ -19,14 +19,14 @@ class Product extends Model implements HasMedia
 
     protected $fillable = [
         'name',
-        'category',
         'description',
         'brand',
         'price',
         'count_in_stock',
         'rating',
         'num_of_reviews',
-        'user_id'
+        'user_id',
+        'category_id'
     ];
 
     protected $likeFilterFields = [
@@ -96,5 +96,9 @@ class Product extends Model implements HasMedia
     public function order() : BelongsToMany
     {
         return $this->belongsToMany(Order::class, 'order_items')->withPivot('quantity')->withTimestamps();
+    }
+    public function category() : BelongsTo
+    {
+        return $this->belongsTo(Product::class);
     }
 }
