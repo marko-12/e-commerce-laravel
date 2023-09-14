@@ -16,7 +16,10 @@ class ReviewController extends Controller
     {
         $validated = $request->validated();
 
-        if (!$user = User::find($request->user_id))
+        /** @var User $user */
+        $user = auth()->user();
+
+        if (!$user)
         {
             return response()->json(['message' => 'User not found'], Response::HTTP_NOT_FOUND);
         }

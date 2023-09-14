@@ -16,7 +16,9 @@ class ProductController extends Controller
 {
     public function index()
     {
-        return ProductResource::collection(Product::all());
+        $products = Product::get()->toQuery()->paginate(9);
+        return ProductResource::collection($products)->response()->getData(true);
+        //return ProductResource::collection(Product::all());
     }
     public function getProductsPaginated()
     {
@@ -39,6 +41,8 @@ class ProductController extends Controller
     }
     public function store(ProductRequest $request)
     {
+        $request->validated();
+
         /** @var User $user */
         $user = auth()->user();
 
@@ -121,7 +125,7 @@ class ProductController extends Controller
     }
     public function getCategories()
     {
-        $categories = Category::all()->pluck('name');
+        $categories = Category::all();
         return response()->json($categories);
     }
 
