@@ -29,24 +29,21 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string',
             'email' => 'required|string|email',
-            //'password' => 'required|string'
         ]);
 
         $name = $request->name;
         $email = $request->email;
-        $password = bcrypt($request->password);
         if (User::find($id)->update([
             'name' => $name,
-            'email' =>$email,
-            //'password' => $password
+            'email' =>$email
         ]))
         {
             $updatedUser = User::find($id);
-            return response()->json(["message" => "User successfully updated", "updated_user" => $updatedUser], Response::HTTP_OK);
+            return response()->json(["message" => "Profile successfully updated", "updated_user" => $updatedUser], Response::HTTP_OK);
         }
         else
         {
-            return response()->json(["message" => "Error while updating user"], Response::HTTP_NOT_FOUND);
+            return response()->json(["message" => "Error while updating profile"], Response::HTTP_NOT_FOUND);
         }
     }
 
@@ -72,6 +69,12 @@ class UserController extends Controller
 
     public function changeUser(Request $request, $id)
     {
+        $request->validate([
+            'name' => 'required|string',
+            'email' => 'required|string|email',
+            'isAdmin' => 'required|bool'
+        ]);
+
         if ($user = User::find($id))
         {
             $user->update([
@@ -79,7 +82,7 @@ class UserController extends Controller
                 'email' => $request->email,
                 'isAdmin' => $request->isAdmin
             ]);
-            return response()->json(["message" => "User successfully updated !"], Response::HTTP_OK);
+            return response()->json(["message" => "User privileges updated"], Response::HTTP_OK);
         }
         else
         {

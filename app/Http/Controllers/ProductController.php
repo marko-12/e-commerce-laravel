@@ -65,51 +65,60 @@ class ProductController extends Controller
             return response()->json(["message" => "Error while creating product"], Response::HTTP_NOT_FOUND);
         }
     }
-    public function update($id, Request $request)
+    public function update(Request $request, $id)
     {
         if ($request->validate([
             'name' => 'required|string',
             'brand' => 'required|string',
-            'category' => 'required|string',
+            'category_id' => 'required|int',
             'price' => 'required|int',
             'count_in_stock' => 'required|int',
             'description' => 'nullable|string|max:255'
         ]))
         {
             $product = Product::find($id);
-            if (!$product)
-                return response()->json(['message' => "The product doesn't exist"], Response::HTTP_NOT_FOUND);
+
 
             if ($updatedproduct = $product->update([
                 'name' => $request->name,
                 'image' => $request->image,
                 'brand' => $request->brand,
-                'category' => $request->category,
+                'category_id' => $request->category_id,
                 'description' => $request->description,
                 'price' => $request->price,
                 'count_in_stock' => $request->count_in_stock,
-                //'rating' => $request->rating,
-                //'num_of_reviews' => $request->num_of_reviews,
             ]))
-            {
-//                if (array_key_exists('image', $request->validated()))
-//                {
-//                    foreach ($request->image as $img)
-//                    {
-//                        $imageFileName = md5($img->getClientOriginalName()) . '.' .
-//                            $img->getClientOriginalExtension();
-//                        $updatedproduct->getMedia('product-images')->destroy();
-//                        $file = $updatedproduct->addMedia($img)
-//                            ->setFileName($imageFileName)
-//                            ->toMediaCollection('product-images', 'public');
-//                    }
-//                }
                 return response()->json(["message" => "Product successfully updated"], Response::HTTP_OK);
-            }
         }
         else
         {
             return response()->json(['message' => "Error while updating product"], Response::HTTP_NOT_FOUND);
+        }
+    }
+    public function uploadImage(Request $request, $id)
+    {
+        if($request->validate([
+            'image' => 'array|min:1',
+            'image.*' => 'image'
+        ]))
+        {
+            $product = Product::find($id);
+            if (!$product)
+                return response()->json(['message' => "The product doesn't exist"], Response::HTTP_NOT_FOUND);
+
+            if (array_key_exists('image', $request->all())) {
+                $product->media()->delete();
+                foreach ($request->image as $img)
+                {
+                    $imageFileName = md5($img->getClientOriginalName()) . '.' .
+                        $img->getClientOriginalExtension();
+
+                    $file = $product->addMedia($img)
+                        ->setFileName($imageFileName)
+                        ->toMediaCollection('product-images', 'public');
+                }
+            }
+            return response()->json(["message" => "Image(s) uploaded successfully"]);
         }
     }
     public function destroy($id)

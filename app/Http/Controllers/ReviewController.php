@@ -24,14 +24,18 @@ class ReviewController extends Controller
             return response()->json(['message' => 'User not found'], Response::HTTP_NOT_FOUND);
         }
         $product = Product::find($id);
-        if ($product->review()->where('user_id','=', $request->user_id)->exists())
+        if ($product->review()->where('user_id','=', $user->id)->exists())
         {
             return response()->json([
                 'message' => 'You have already submitted a review for this product'
             ],Response::HTTP_FORBIDDEN);
         }
 
-        $review = $product->review()->create($validated, ['product_id' => $id]);
+        $review = $product->review()->create([
+            'comment' => $request->comment,
+            'rating' => $request->rating,
+            'product_id' => $id,
+            'user_id' => $user->id]);
         $num_of_rev = $product->review()->count();
         $reviews_sum = $product->review()->sum('rating');
         $newRating = $reviews_sum/$num_of_rev;
