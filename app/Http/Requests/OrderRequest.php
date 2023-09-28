@@ -26,8 +26,7 @@ class OrderRequest extends FormRequest
             'city' => 'required|string',
             'postal_code' => 'required|int',
             'address' => 'required|string',
-            'order_items' => 'required|array',
-            'user_id' => 'required|int'
+            'order_items' => 'required|array'
         ];
     }
 }

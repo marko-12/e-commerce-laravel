@@ -26,9 +26,7 @@ class ReviewController extends Controller
         $product = Product::find($id);
         if ($product->review()->where('user_id','=', $user->id)->exists())
         {
-            return response()->json([
-                'message' => 'You have already submitted a review for this product'
-            ],Response::HTTP_FORBIDDEN);
+            return response()->json(['message' => 'You have already submitted a review for this product'],Response::HTTP_FORBIDDEN);
         }
 
         $review = $product->review()->create([

@@ -6,6 +6,7 @@ use App\Http\Requests\OrderRequest;
 use App\Http\Resources\OrderProductResource;
 use App\Http\Resources\ProductResource;
 use App\Models\Order;
+use App\Models\Product;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -39,9 +40,20 @@ class OrderController extends Controller
     {
         $validated = $request->validated();
 
-        $user = User::find($request->user_id);
+        //$user = User::find($request->user_id);
+        /** @var User $user */
+        $user = auth()->user();
         $newOrder = $user->order()->create($validated);
-        $newOrderItems = $newOrder->product()->sync($request->order_items);
+        $newOrderItems = $newOrder->product()->sync($request->order_items);//dd($request->order_items);
+
+        foreach ($request->order_items as $orderItem)
+        {
+            $product = Product::find($orderItem["product_id"]);
+            $newCountInStock = $product->count_in_stock - $orderItem["quantity"];
+            $product->update([
+               'count_in_stock' =>  $newCountInStock
+            ]);
+        }
 
         if ($newOrder && $newOrderItems)
         {
