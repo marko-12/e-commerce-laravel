@@ -23,11 +23,29 @@ class ReviewController extends Controller
         {
             return response()->json(['message' => 'User not found'], Response::HTTP_NOT_FOUND);
         }
+
         $product = Product::find($id);
         if ($product->review()->where('user_id','=', $user->id)->exists())
         {
             return response()->json(['message' => 'You have already submitted a review for this product'],Response::HTTP_FORBIDDEN);
         }
+
+        $productOrdered = false;
+        $userOrders = $user->order()->get();
+        foreach ($userOrders as $order)
+        {
+            $product = $order->product()->wherePivot('product_id', $id)->first();
+
+            if ($product) {
+                $productOrdered = true;
+                break;
+            }
+        }
+        if (!$productOrdered)
+        {
+            return response()->json(['message' => 'You have not ordered this product'],Response::HTTP_FORBIDDEN);
+        }
+
 
         $review = $product->review()->create([
             'comment' => $request->comment,

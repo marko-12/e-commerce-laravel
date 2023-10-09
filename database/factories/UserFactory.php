@@ -21,9 +21,9 @@ class UserFactory extends Factory
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
+            'isAdmin' => fake()->boolean(),
             'email_verified_at' => now(),
             'password' => bcrypt('password'), // password
-            'remember_token' => Str::random(10)
         ];
     }
 

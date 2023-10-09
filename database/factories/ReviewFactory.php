@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -20,10 +21,10 @@ class ReviewFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
             'comment' => Str::random(),
             'rating' => fake()->numberBetween(1, 5),
-            'product_id' => Product::inRandomOrder()->first()->id
+            'product_id' => Product::inRandomOrder()->first()->id,
+            'user_id' => User::inRandomOrder()->first()->id
         ];
     }
 }

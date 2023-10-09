@@ -21,6 +21,7 @@ class OrderFactory extends Factory
             'country' => fake()->country(),
             'city' => fake()->city(),
             'address' => fake()->address(),
+            'postal_code' => fake()->numberBetween(11000, 21000),
             'delivered' => false,
             'delivered_at' => null,
             'paid' => false,

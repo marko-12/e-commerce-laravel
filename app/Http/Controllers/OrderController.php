@@ -24,7 +24,8 @@ class OrderController extends Controller
             $user = $order?->user()->get();
             $users->push($user->first());
             $orderItem = $order?->product()->get();
-            $orderItems->push($orderItem);
+            if ($orderItem->count() > 0)
+                $orderItems->push($orderItem);
         }
         return response()->json(["orders" => $orders, "users" => $users, "order_items" => $orderItems], Response::HTTP_OK);
     }
@@ -40,11 +41,10 @@ class OrderController extends Controller
     {
         $validated = $request->validated();
 
-        //$user = User::find($request->user_id);
         /** @var User $user */
         $user = auth()->user();
         $newOrder = $user->order()->create($validated);
-        $newOrderItems = $newOrder->product()->sync($request->order_items);//dd($request->order_items);
+        $newOrderItems = $newOrder->product()->sync($request->order_items);
 
         foreach ($request->order_items as $orderItem)
         {
