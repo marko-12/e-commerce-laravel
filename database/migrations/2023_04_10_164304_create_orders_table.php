@@ -21,6 +21,7 @@ return new class extends Migration
             $table->dateTime('delivered_at')->nullable();
             $table->boolean('paid')->default(false);
             $table->dateTime('paid_at')->nullable();
+            $table->boolean('pay_before_shipping')->default(false);
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });

@@ -16,7 +16,8 @@ class OrderController extends Controller
 {
     public function index()
     {
-        $orders = Order::all();
+        //$orders = Order::all();
+        $orders = Order::get()->toQuery()->paginate(10);
         $users = collect();
         $orderItems = collect();
         foreach ($orders as $order)

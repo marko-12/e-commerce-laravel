@@ -14,9 +14,10 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
-    public function index() : Collection
+    public function index()
     {
-        return User::all();
+        $users = User::get()->toQuery()->paginate(10);
+        return response()->json($users,Response::HTTP_OK);
     }
     public function show($id)
     {

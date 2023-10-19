@@ -16,9 +16,8 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::get()->toQuery()->paginate(9);
+        $products = Product::get()->toQuery()->paginate(16);
         return ProductResource::collection($products)->response()->getData(true);
-        //return ProductResource::collection(Product::all());
     }
     public function getProductsPaginated()
     {

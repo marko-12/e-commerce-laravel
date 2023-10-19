@@ -21,6 +21,7 @@ class Order extends Model
         'delivered_at',
         'paid',
         'paid_at',
+        'pay_before_shipping',
         'user_id'
     ];
 

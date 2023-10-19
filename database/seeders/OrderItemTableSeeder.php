@@ -15,9 +15,9 @@ class OrderItemTableSeeder extends Seeder
      */
     public function run(): void
     {
-        //OrderItem::factory()->count(20)->create();
-        $products = Product::all();
-        $orders = Order::all();
-        $products->orders()->sync($orders);
+        OrderItem::factory()->count(50)->create();
+//        $products = Product::all();
+//        $orders = Order::all();
+//        $products->orders()->sync($orders);
     }
 }

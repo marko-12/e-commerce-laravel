@@ -26,6 +26,7 @@ class OrderFactory extends Factory
             'delivered_at' => null,
             'paid' => false,
             'paid_at' => null,
+            'pay_before_shipping' => false,
             'user_id' => User::inRandomOrder()->first()->id
         ];
     }

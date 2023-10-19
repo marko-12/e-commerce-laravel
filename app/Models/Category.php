@@ -27,11 +27,21 @@ class Category extends Model
     public const BASIC_CATEGORIES = [
         self::SHOES => 'Shoes',
         self::CLOTHES => 'Clothes',
-        self::PHONES => 'Phones',
+        self::COSMETICS => 'Cosmetics and Body Care',
+        self::ELECTRONICS => 'Electronics',
+        self::OFFICE_EQUIPMENT => 'Office Equipment',
+        self::PET_CARE => 'Pet Care',
+        self::MEDIA => 'Media',
+        self::HOUSEHOLD_ITEMS => 'Household Items',
         self::OTHER => 'Other'
     ];
     public const SHOES = 1;
     public const CLOTHES = 2;
-    public const PHONES = 3;
-    public const OTHER = 4;
+    public const COSMETICS = 3;
+    public const ELECTRONICS = 4;
+    public const OFFICE_EQUIPMENT  = 5;
+    public const PET_CARE  = 6;
+    public const MEDIA  = 7;
+    public const HOUSEHOLD_ITEMS  = 8;
+    public const OTHER  = 9;
 }
